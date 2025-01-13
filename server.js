@@ -7,8 +7,17 @@ require('dotenv').config();
 
 //Middlewares
 fastify.register(cors);
-fastify.register(require('./routes/summit.routes.js'));
+
+//Routes
 fastify.register(require('./routes/users.routes.js'));
+
+//Välkomstroute
+fastify.get('/', async (request, reply) => {
+    return {
+        meddelande:
+            'Hej! Detta är ett API gjort av Saga Einarsdotter Kikajon för kursen Fullstacksutveckling med Ramverk, Mittuniversitetet 2025. Det är gjort med Fastify som ramverk, mot en MySQL-databas.',
+    };
+});
 
 //App-inställningar
 let port = process.env.PORT || 3000;

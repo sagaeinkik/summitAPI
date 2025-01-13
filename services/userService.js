@@ -1,11 +1,33 @@
 'use strict';
 
-//Hitta användare
+//Hitta alla användare
 module.exports.findAll = async (mysql) => {
     try {
         const [rows] = await mysql.query('SELECT * FROM users');
         return rows;
     } catch (err) {
+        console.error('Något gick fel vid hämtning av användare: ' + err);
+        throw err;
+    }
+};
+
+//Hitta specifik användare enligt ID
+module.exports.findUserById = async (mysql, id) => {
+    try {
+        const [row] = await mysql.query('SELECT * FROM users WHERE id = ?', id);
+        return row[0];
+    } catch (error) {
+        console.error('Något gick fel vid hämtning av användare: ' + err);
+        throw err;
+    }
+};
+
+//Hitta specifik användare enligt användarnamn
+module.exports.findUserByUsername = async (mysql, username) => {
+    try {
+        const [row] = await mysql.query('SELECT * FROM users WHERE username = ?', username);
+        return row[0];
+    } catch (error) {
         console.error('Något gick fel vid hämtning av användare: ' + err);
         throw err;
     }
