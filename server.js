@@ -2,13 +2,13 @@
 const fastify = require('fastify')({
     logger: false,
 });
-const jwt = require('jsonwebtoken');
 const cors = require('@fastify/cors');
 require('dotenv').config();
 
 //Middlewares
 fastify.register(cors);
-fastify.register(require('./routes/products.routes.js'));
+fastify.register(require('./routes/summit.routes.js'));
+fastify.register(require('./routes/users.routes.js'));
 
 //App-inställningar
 let port = process.env.PORT || 3000;
@@ -19,6 +19,7 @@ async function dbConnect() {
     try {
         await fastify.register(require('@fastify/mysql'), {
             connectionString: connectionString,
+            promise: true,
         });
         console.log('Succé! Ansluten till databasen.');
     } catch (err) {
