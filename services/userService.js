@@ -63,9 +63,7 @@ module.exports.updateUser = async (mysql, id, username, password) => {
     try {
         const [rows] = await mysql.query(
             'UPDATE users SET username = ?, password = ? WHERE id = ?',
-            username,
-            password,
-            id
+            [username, password, id]
         );
         return rows;
     } catch (err) {

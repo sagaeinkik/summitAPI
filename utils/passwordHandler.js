@@ -13,16 +13,22 @@ module.exports.createToken = (username) => {
 };
 
 //Validera token
-module.exports.authenticateToken = async (req, res) => {
-    const authHeader = req.headers['authorization'];
+module.exports.authenticateToken = async (request, reply) => {
+    const authHeader = request.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; //Själva token utan ord
 
-    if (!token) return res.status(401).send({ message: 'Unauthorized, missing token' });
+    //Header saknas helt
+    if (!authHeader) {
+        return reply.code(401).send({ message: 'Unauthorized, missing token' });
+    }
+
+    //Token saknas
+    if (!token) return reply.code(401).send({ message: 'Unauthorized, missing token' });
 
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
-        if (err) return res.status(403).send({ message: 'Unauthorized, invalid token' });
+        if (err) return reply.code(403).send({ message: 'Unauthorized, invalid token' });
 
-        req.username = user.username;
+        request.username = user.username;
     });
 };
 

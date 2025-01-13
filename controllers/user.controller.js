@@ -148,5 +148,68 @@ module.exports.loginUser = async (request, reply) => {
 };
 
 //Uppdatera användare
+module.exports.updateUser = async (request, reply) => {
+    errorHandler.resetErrors(err);
+    const { username, password } = request.body;
+    const id = request.params.id;
+
+    try {
+        //Försök hitta användare enligt ID
+        const user = await userService.findUserById(request.server.mysql, id);
+
+        //Kolla om användare finns
+        if (!user) {
+            err.https_response.message = 'Not found';
+            err.https_response.code = 404;
+            err.message = 'Hittade ingen användare';
+
+            return reply.code(404).send(err);
+        } else {
+            //Hasha lösenord
+            const hashedPassword = await pwHandler.hashPassword(password);
+            //Uppdatera användare
+            await userService.updateUser(request.server.mysql, id, username, hashedPassword);
+            return reply.code(200).send(['Användare uppdaterad!', { användarnamn: username }]);
+        }
+    } catch (error) {
+        return reply.code(500).send(error);
+    }
+};
 
 //Radera användare
+module.exports.deleteUser = async (request, reply) => {
+    errorHandler.resetErrors(err);
+
+    const id = request.params.id;
+
+    try {
+        //Hitta användaren
+        const deletedUser = await userService.findUserById(request.server.mysql, id);
+
+        //Finns ingen användare:
+        if (!deletedUser) {
+            err.https_response.message = 'Not found';
+            err.https_response.code = 404;
+            err.message = 'Hittade ingen användare';
+
+            return reply.code(404).send(err);
+        } else {
+            //Användare finns:
+            //Autentisera med token
+            await pwHandler.authenticateToken(request, reply);
+
+            //Namnet stämmer inte:
+            if (request.username !== deletedUser.username) {
+                return reply.code(403).send([{ message: 'Unauthorized' }]);
+            } else {
+                //Namnet stämmer: radera
+                const deleted = await userService.deleteUser(request.server.mysql, id);
+                return reply
+                    .code(200)
+                    .send(['Användare raderad!', { deletedUser: deletedUser.username }, deleted]);
+            }
+        }
+    } catch (error) {
+        return reply.code(500).send(error);
+    }
+};

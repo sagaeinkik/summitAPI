@@ -10,8 +10,8 @@ module.exports.getAllUsersOpts = {
                 items: {
                     type: 'object',
                     properties: {
+                        id: { type: 'integer' },
                         username: { type: 'string' },
-                        password: { type: 'string' },
                     },
                 },
             },
@@ -27,8 +27,8 @@ module.exports.getSingleUserOpts = {
             200: {
                 type: 'object',
                 properties: {
+                    id: { type: 'integer' },
                     username: { type: 'string' },
-                    password: { type: 'string' },
                 },
             },
         },
@@ -58,8 +58,8 @@ module.exports.addUserOpts = {
             200: {
                 type: 'object',
                 properties: {
+                    id: { type: 'integer' },
                     username: { type: 'string' },
-                    password: { type: 'string' },
                 },
             },
         },
@@ -77,4 +77,42 @@ module.exports.loginUserOpts = {
         },
     },
     handler: userController.loginUser,
+};
+
+//Uppdatera användare
+module.exports.updateUserOpts = {
+    schema: {
+        body: {
+            type: 'object',
+            properties: {
+                username: {
+                    type: 'string',
+                    minLength: 3,
+                    maxLength: 30,
+                },
+                password: {
+                    type: 'string',
+                    minLength: 5,
+                },
+            },
+        },
+        response: {
+            200: {
+                type: 'array',
+            },
+        },
+    },
+    handler: userController.updateUser,
+};
+
+//Radera användare
+module.exports.deleteUserOpts = {
+    schema: {
+        response: {
+            200: {
+                type: 'array',
+            },
+        },
+    },
+    handler: userController.deleteUser,
 };
