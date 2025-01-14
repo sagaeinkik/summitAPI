@@ -1,7 +1,6 @@
 'use strict';
 
 const errorHandler = require('../utils/errMsg');
-const pwHandler = require('../utils/passwordHandler');
 const categoryService = require('../services/category.service');
 
 //ERROR-OBJEKT
@@ -18,10 +17,10 @@ module.exports.getAllCategories = async (request, reply) => {
             //Fyll på error-meddelandet
             err = errorHandler.createError('Not found', 404, 'Hittade inga kategorier');
             return reply.code(404).send(err);
-        } else {
-            //Returnera hela listan
-            return reply.send(categories);
         }
+
+        //Returnera hela listan
+        return reply.send(categories);
     } catch (error) {
         return reply.code(500).send(error);
     }
@@ -37,10 +36,10 @@ module.exports.getCatById = async (request, reply) => {
         if (!category) {
             err = errorHandler.createError('Not found', 404, 'Hittade ingen kategori');
             return reply.code(404).send(err);
-        } else {
-            //Returnera kategorin
-            return reply.send(category);
         }
+
+        //Returnera kategorin
+        return reply.send(category);
     } catch (error) {
         return reply.code(500).send(error);
     }

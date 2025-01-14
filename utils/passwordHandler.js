@@ -4,6 +4,7 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const jwtKey = process.env.JWT_SECRET_KEY;
 const bcrypt = require('bcrypt');
+const errHandler = require('./errMsg');
 
 //Skapa web token
 const expirationDate = 60 * 60 * 3; //Tre timmar
@@ -14,19 +15,28 @@ module.exports.createToken = (username) => {
 
 //Validera token
 module.exports.authenticateToken = async (request, reply) => {
+    let err = errHandler.createError();
     const authHeader = request.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; //Själva token utan ord
 
     //Header saknas helt
     if (!authHeader) {
-        return reply.code(401).send({ message: 'Unauthorized, missing token' });
+        err = errHandler.createError('Unauthorized', 401, 'Missing Token');
+        return reply.code(401).send(err);
     }
 
     //Token saknas
-    if (!token) return reply.code(401).send({ message: 'Unauthorized, missing token' });
+    if (!token) {
+        err = errHandler.createError('Unauthorized', 401, 'Missing Token');
+        return reply.code(401).send(err);
+    }
 
+    //Har vi kommit hit kan vi jämföra token med nyckel
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
-        if (err) return reply.code(403).send({ message: 'Unauthorized, invalid token' });
+        if (err) {
+            err = errHandler.createError('Unauthorized', 403, 'Invalid Token');
+            return reply.code(403).send(err);
+        }
 
         request.username = user.username;
     });

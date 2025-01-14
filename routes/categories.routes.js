@@ -1,5 +1,4 @@
 'use strict';
-const pwHandler = require('../utils/passwordHandler');
 
 //Importera routes från Options
 const {

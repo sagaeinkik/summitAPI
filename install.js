@@ -88,7 +88,7 @@ async function suppliersTable() {
         //Skapa tabell
         await asyncQuery(`CREATE TABLE suppliers (
             id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-            company_name VARCHAR(255),
+            company_name VARCHAR(255) UNIQUE NOT NULL,
             street_address VARCHAR(255),
             area VARCHAR(255),
             telephone VARCHAR(255),
