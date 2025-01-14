@@ -1,17 +1,10 @@
 'use strict';
 const errorHandler = require('../utils/errMsg');
 const pwHandler = require('../utils/passwordHandler');
-const userService = require('../services/userService');
+const userService = require('../services/user.service');
 
 //ERROR-OBJEKT
-let err = {
-    https_response: {
-        message: '',
-        code: '',
-    },
-    message: '',
-    details: '',
-};
+let err = errorHandler.createError();
 
 //Hämta alla användare
 module.exports.getAllUsers = async (request, reply) => {
@@ -24,12 +17,10 @@ module.exports.getAllUsers = async (request, reply) => {
 
         //Kolla om användare hittades
         if (users.length === 0) {
-            err.https_response.message = 'Not found';
-            err.https_response.code = 404;
-            err.message = 'Hittade inga användare';
+            err = errorHandler.createError('Not found', 404, 'Hittade inga användare');
             return reply.code(404).send(err);
         } else {
-            return reply.status(200).send(users);
+            return reply.send(users);
         }
     } catch (error) {
         return reply.code(500).send(error);
@@ -45,12 +36,10 @@ module.exports.getSingleUser = async (request, reply) => {
 
         //Kolla om användare finns
         if (!user) {
-            err.https_response.message = 'Not found';
-            err.https_response.code = 404;
-            err.message = 'Hittade ingen användare';
+            err = errorHandler.createError('Not found', 404, 'Hittade ingen användare');
             return reply.code(404).send(err);
         } else {
-            return reply.status(200).send(user);
+            return reply.send(user);
         }
     } catch (error) {
         return reply.code(500).send(error);
@@ -62,27 +51,23 @@ module.exports.addUser = async (request, reply) => {
     errorHandler.resetErrors(err);
     const { username, password } = request.body;
 
-    //Kolla om användarnamn är tomt
-    if (!username || username.trim() === '') {
-        err.https_response.message = 'Bad request';
-        err.https_response.code = 400;
-        err.message = 'Användarnamn saknas';
-        return reply.code(400).send(err);
+    //Kolla att användarnamn och lösenord inte är tomma
+    const validUsername = errorHandler.checkEmpty(username, 'Användarnamn');
+    const validPassword = errorHandler.checkEmpty(password, 'Lösenord');
+
+    if (!validUsername.valid) {
+        return reply.code(validUsername.error.https_response.code).send(validUsername.error);
     }
-    if (!password || password.trim() === '') {
-        err.https_response.message = 'Bad request';
-        err.https_response.code = 400;
-        err.message = 'Lösenord saknas';
-        return reply.code(400).send(err);
+    if (!validPassword.valid) {
+        return reply.code(validPassword.error.https_response.code).send(validPassword.error);
     }
+
     try {
         //Försök hitta användare med samma användarnamn
         const existingUser = await userService.findUserByUsername(request.server.mysql, username);
 
         if (existingUser) {
-            err.https_response.message = 'Conflict';
-            err.https_response.code = 409;
-            err.message = 'Upptaget användarnamn';
+            err = errorHandler.createError('Conflict', 409, 'Upptaget användarnamn');
             return reply.code(409).send(err);
         } else {
             //Hasha lösenord
@@ -99,7 +84,7 @@ module.exports.addUser = async (request, reply) => {
             const token = pwHandler.createToken(username);
 
             //Returnera succé
-            return reply.code(201).send(['Användare tillagd!', newUser.username, token]);
+            return reply.code(201).send({ message: 'Användare tillagd', newUser, token: token });
         }
     } catch (error) {
         return reply.code(500).send(error);
@@ -117,9 +102,7 @@ module.exports.loginUser = async (request, reply) => {
 
         //Kolla om användare finns
         if (!user) {
-            err.https_response.message = 'Not found';
-            err.https_response.code = 404;
-            err.message = 'Hittade ingen användare';
+            err = errorHandler.createError('Not found', 404, 'Hittade ingen användare');
             return reply.code(404).send(err);
         } else {
             //Jämför lösenord
@@ -128,17 +111,17 @@ module.exports.loginUser = async (request, reply) => {
             if (authorized) {
                 //Skapa token
                 const token = pwHandler.createToken(username);
-                return reply
-                    .code(200)
-                    .send([
-                        'Inloggning lyckades',
-                        { användarnamn: user.username },
-                        { token: token },
-                    ]);
+                return reply.send({
+                    message: 'Inloggning lyckades',
+                    loggedInUser: { username: username },
+                    token: token,
+                });
             } else {
-                err.https_response.message = 'Unauthorized';
-                err.https_response.code = 401;
-                err.message = 'Fel användarnamn eller lösenord.';
+                err = errorHandler.createError(
+                    'Unauthorized',
+                    401,
+                    'Fel användarnamn eller lösenord'
+                );
                 return reply.code(401).send(err);
             }
         }
@@ -159,17 +142,17 @@ module.exports.updateUser = async (request, reply) => {
 
         //Kolla om användare finns
         if (!user) {
-            err.https_response.message = 'Not found';
-            err.https_response.code = 404;
-            err.message = 'Hittade ingen användare';
-
+            err = errorHandler.createError('Not found', 404, 'Hittade ingen användare');
             return reply.code(404).send(err);
         } else {
             //Hasha lösenord
             const hashedPassword = await pwHandler.hashPassword(password);
             //Uppdatera användare
             await userService.updateUser(request.server.mysql, id, username, hashedPassword);
-            return reply.code(200).send(['Användare uppdaterad!', { användarnamn: username }]);
+            return reply.send({
+                message: 'Användare uppdaterad!',
+                updatedUser: { id: id, username: username },
+            });
         }
     } catch (error) {
         return reply.code(500).send(error);
@@ -188,25 +171,31 @@ module.exports.deleteUser = async (request, reply) => {
 
         //Finns ingen användare:
         if (!deletedUser) {
-            err.https_response.message = 'Not found';
-            err.https_response.code = 404;
-            err.message = 'Hittade ingen användare';
-
+            err = errorHandler.createError('Not found', 404, 'Hittade ingen användare');
             return reply.code(404).send(err);
         } else {
-            //Användare finns:
-            //Autentisera med token
+            /* Användare finns. 
+            Kontrollera att det är användaren som är inloggad som gör requesten för att radera (så man inte kan radera andras konton) */
             await pwHandler.authenticateToken(request, reply);
 
             //Namnet stämmer inte:
             if (request.username !== deletedUser.username) {
-                return reply.code(403).send([{ message: 'Unauthorized' }]);
+                err = errorHandler.createError(
+                    'Unauthorized',
+                    403,
+                    'Du är obehörig att utföra denna åtgärd.'
+                );
+                return reply.code(403).send(err);
             } else {
                 //Namnet stämmer: radera
                 const deleted = await userService.deleteUser(request.server.mysql, id);
-                return reply
-                    .code(200)
-                    .send(['Användare raderad!', { deletedUser: deletedUser.username }, deleted]);
+                return reply.send({
+                    message: 'Användare raderad!',
+                    deletedUser: {
+                        id: deletedUser.id,
+                        username: deletedUser.username,
+                    },
+                });
             }
         }
     } catch (error) {

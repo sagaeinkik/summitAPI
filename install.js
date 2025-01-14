@@ -57,7 +57,7 @@ async function usersTable() {
         //Skapa tabell
         await asyncQuery(`CREATE TABLE users (
             id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-            username VARCHAR(255) NOT NULL, 
+            username VARCHAR(255) UNIQUE NOT NULL, 
             password VARCHAR(255) NOT NULL, 
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )`);
@@ -74,7 +74,7 @@ async function categoriesTable() {
         //Skapa tabell
         await asyncQuery(`CREATE TABLE categories (
             id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-            name VARCHAR(255) NOT NULL
+            category_name VARCHAR(255) UNIQUE NOT NULL
             )`);
         console.log('Tabell Categories skapades \n');
     } catch (error) {
@@ -150,21 +150,21 @@ async function categoryTriggers() {
         await asyncQuery(`CREATE TRIGGER category_insert AFTER INSERT ON categories
             FOR EACH ROW
             INSERT INTO log (action, table_name, affected_id, affected_data)
-            VALUES ('insert', 'categories', NEW.id, JSON_OBJECT('id', NEW.id, 'name', NEW.name))`);
+            VALUES ('insert', 'categories', NEW.id, JSON_OBJECT('id', NEW.id, 'category_name', NEW.category_name))`);
         console.log('Trigger category_insert skapades \n');
 
         //Trigger för updates
         await asyncQuery(`CREATE TRIGGER category_update AFTER UPDATE ON categories
             FOR EACH ROW
             INSERT INTO log (action, table_name, affected_id, affected_data)
-            VALUES ('update', 'categories', NEW.id, JSON_OBJECT('id', NEW.id, 'name', NEW.name))`);
+            VALUES ('update', 'categories', NEW.id, JSON_OBJECT('id', NEW.id, 'category_name', NEW.category_name))`);
         console.log('Trigger category_update skapades \n');
 
         //Trigger för deletes
         await asyncQuery(`CREATE TRIGGER category_delete AFTER DELETE ON categories
             FOR EACH ROW
             INSERT INTO log (action, table_name, affected_id, affected_data)
-            VALUES ('delete', 'categories', OLD.id, JSON_OBJECT('id', OLD.id, 'name', OLD.name))`);
+            VALUES ('delete', 'categories', OLD.id, JSON_OBJECT('id', OLD.id, 'category_name', OLD.category_name))`);
         console.log('Trigger category_delete skapades \n');
     } catch (error) {
         console.error('Något gick fel vid skapande av triggers: ' + error);
@@ -241,7 +241,7 @@ async function productView() {
                 p.amount,
                 p.in_price,
                 p.out_price,
-                c.name AS category_name,
+                c.category_name,
                 s.company_name AS supplier_name
             FROM 
                 products p

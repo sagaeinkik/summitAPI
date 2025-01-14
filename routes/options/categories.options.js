@@ -1,9 +1,10 @@
 'use strict';
-const userController = require('../../controllers/user.controller');
+
+const categoryController = require('../../controllers/category.controller');
 const pwHandler = require('../../utils/passwordHandler');
 
-//Alla användare
-module.exports.getAllUsersOpts = {
+//Alla kategorier
+module.exports.getAllCatsOpts = {
     schema: {
         response: {
             200: {
@@ -12,46 +13,42 @@ module.exports.getAllUsersOpts = {
                     type: 'object',
                     properties: {
                         id: { type: 'integer' },
-                        username: { type: 'string' },
+                        category_name: { type: 'string' },
                     },
                 },
             },
         },
     },
-    handler: userController.getAllUsers,
+    handler: categoryController.getAllCategories,
 };
 
-//Enskild användare
-module.exports.getSingleUserOpts = {
+//Specifik kategori
+module.exports.getCategoryOpts = {
     schema: {
         response: {
             200: {
                 type: 'object',
                 properties: {
                     id: { type: 'integer' },
-                    username: { type: 'string' },
+                    category_name: { type: 'string' },
                 },
             },
         },
     },
-    handler: userController.getSingleUser,
+    handler: categoryController.getCatById,
 };
 
-//Lägg till användare
-module.exports.addUserOpts = {
+//Lägg till kategori
+module.exports.addCatOpts = {
     schema: {
         body: {
             type: 'object',
-            required: ['username', 'password'],
+            required: ['category_name'],
             properties: {
-                username: {
+                category_name: {
                     type: 'string',
-                    minLength: 3,
+                    minLength: 2,
                     maxLength: 255,
-                },
-                password: {
-                    type: 'string',
-                    minLength: 5,
                 },
             },
         },
@@ -60,70 +57,11 @@ module.exports.addUserOpts = {
                 type: 'object',
                 properties: {
                     message: { type: 'string' },
-                    newUser: {
+                    addedCategory: {
                         type: 'object',
                         properties: {
                             id: { type: 'integer' },
-                            username: { type: 'string' },
-                        },
-                    },
-                    token: { type: 'string' },
-                },
-            },
-        },
-    },
-    handler: userController.addUser,
-};
-
-//Logga in användare
-module.exports.loginUserOpts = {
-    schema: {
-        response: {
-            200: {
-                type: 'object',
-                properties: {
-                    message: { type: 'string' },
-                    loggedInUser: {
-                        type: 'object',
-                        properties: {
-                            username: { type: 'string' },
-                        },
-                    },
-                    token: { type: 'string' },
-                },
-            },
-        },
-    },
-    handler: userController.loginUser,
-};
-
-//Uppdatera användare
-module.exports.updateUserOpts = {
-    schema: {
-        body: {
-            type: 'object',
-            properties: {
-                username: {
-                    type: 'string',
-                    minLength: 3,
-                    maxLength: 255,
-                },
-                password: {
-                    type: 'string',
-                    minLength: 5,
-                },
-            },
-        },
-        response: {
-            200: {
-                type: 'object',
-                properties: {
-                    message: { type: 'string' },
-                    updatedUser: {
-                        type: 'object',
-                        properties: {
-                            id: { type: 'integer' },
-                            username: { type: 'string' },
+                            category_name: { type: 'string' },
                         },
                     },
                 },
@@ -131,27 +69,62 @@ module.exports.updateUserOpts = {
         },
     },
     preHandler: pwHandler.authenticateToken,
-    handler: userController.updateUser,
+    handler: categoryController.addCategory,
 };
 
-//Radera användare
-module.exports.deleteUserOpts = {
+//Uppdatera kategori
+module.exports.updateCatOpts = {
     schema: {
+        body: {
+            type: 'object',
+            required: ['category_name'],
+            properties: {
+                category_name: {
+                    type: 'string',
+                    minLength: 2,
+                    maxLength: 255,
+                },
+            },
+        },
         response: {
             200: {
                 type: 'object',
                 properties: {
                     message: { type: 'string' },
-                    deletedUser: {
+                    updatedCategory: {
                         type: 'object',
                         properties: {
                             id: { type: 'integer' },
-                            username: { type: 'string' },
+                            category_name: { type: 'string' },
                         },
                     },
                 },
             },
         },
     },
-    handler: userController.deleteUser,
+    preHandler: pwHandler.authenticateToken,
+    handler: categoryController.updateCategory,
+};
+
+//Radera kategori
+module.exports.deleteCatOpts = {
+    schema: {
+        response: {
+            200: {
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                    deletedCategory: {
+                        type: 'object',
+                        properties: {
+                            id: { type: 'integer' },
+                            category_name: { type: 'string' },
+                        },
+                    },
+                },
+            },
+        },
+    },
+    preHandler: pwHandler.authenticateToken,
+    handler: categoryController.deleteCategory,
 };

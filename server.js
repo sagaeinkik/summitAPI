@@ -10,6 +10,7 @@ fastify.register(cors);
 
 //Routes
 fastify.register(require('./routes/users.routes.js'));
+fastify.register(require('./routes/categories.routes.js'));
 
 //Välkomstroute
 fastify.get('/', async (request, reply) => {
