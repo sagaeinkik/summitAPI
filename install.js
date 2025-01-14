@@ -133,7 +133,7 @@ async function logTable() {
             table_name VARCHAR(255),
             affected_id INT,
             affected_data JSON,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            logged_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )`);
         console.log('Tabell Log skapades \n');
     } catch (error) {

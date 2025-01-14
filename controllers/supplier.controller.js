@@ -38,7 +38,11 @@ module.exports.getSupplierById = async (request, reply) => {
 
         //Felmeddelande
         if (!supplier) {
-            err = errorHandler.createError('Not found', 404, 'Hittade ingen leverantör');
+            err = errorHandler.createError(
+                'Not found',
+                404,
+                'Hittade ingen leverantör enligt kriterierna'
+            );
             return reply.code(404).send(err);
         }
 
@@ -97,5 +101,87 @@ module.exports.addSupplier = async (request, reply) => {
 };
 
 //Uppdatera
+module.exports.updateSupplier = async (request, reply) => {
+    errorHandler.resetErrors();
+
+    const id = request.params.id;
+    const { company_name, street_address, area, telephone, email } = request.body;
+
+    //Validera fält
+    const nameCheck = errorHandler.checkEmpty(company_name, 'Företagsnamn');
+    const telCheck = errorHandler.checkEmpty(telephone, 'Telefon');
+    const emailCheck = errorHandler.checkEmpty(email, 'E-post');
+
+    if (!nameCheck.valid) {
+        return reply.code(nameCheck.error.https_response.code).send(nameCheck.error);
+    } else if (!telCheck.valid) {
+        return reply.code(telCheck.error.https_response.code).send(telCheck.error);
+    } else if (!emailCheck.valid) {
+        return reply.code(emailCheck.error.https_response.code).send(emailCheck.error);
+    }
+
+    try {
+        //hitta raden att uppdatera
+        const supplierToUpdate = await supplierService.findSupplierById(request.server.mysql, id);
+        if (!supplierToUpdate) {
+            err = errorHandler.createError(
+                'Not found',
+                404,
+                'Hittade ingen leverantör enligt kriterierna'
+            );
+            return reply.code(404).send(err);
+        }
+
+        //Uppdatera
+        const updatedSupplier = await supplierService.updateSupplier(
+            request.server.mysql,
+            company_name,
+            street_address,
+            area,
+            telephone,
+            email,
+            id
+        );
+
+        //Returnera succé
+        return reply.send({ message: 'Leverantör uppdaterad', updatedSupplier });
+    } catch (error) {
+        return reply.code(500).send(error);
+    }
+};
 
 //Radera
+module.exports.deleteSupplier = async (request, reply) => {
+    errorHandler.resetErrors(err);
+    const id = request.params.id;
+
+    try {
+        const deletedSupplier = await supplierService.findSupplierById(request.server.mysql, id);
+
+        //Finns ingen leverantör:
+        if (!deletedSupplier) {
+            err = errorHandler.createError(
+                'Not found',
+                404,
+                'Hittade ingen leverantör enligt kriterierna'
+            );
+            return reply.code(404).send(err);
+        }
+
+        //leverantören hittades:
+        const deleted = await supplierService.deleteSupplier(request.server.mysql, id);
+        return reply.send({
+            message: 'Leverantör borttagen!',
+            deletedSupplier: {
+                id: deletedSupplier.id,
+                company_name: deletedSupplier.company_name,
+                street_address: deletedSupplier.street_address,
+                area: deletedSupplier.area,
+                telephone: deletedSupplier.telephone,
+                email: deletedSupplier.email,
+            },
+        });
+    } catch (error) {
+        return reply.code(500).send(error);
+    }
+};

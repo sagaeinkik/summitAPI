@@ -97,5 +97,78 @@ module.exports.addSupplierOpts = {
 };
 
 //Uppdatera
+module.exports.updateSupplierOpts = {
+    schema: {
+        body: {
+            type: 'object',
+            required: ['company_name', 'telephone', 'email'],
+            properties: {
+                company_name: {
+                    type: 'string',
+                    minLength: 2,
+                    maxLength: 255,
+                },
+                street_address: { type: 'string' },
+                area: { type: 'string' },
+                telephone: {
+                    type: 'string',
+                    minLength: 5,
+                    pattern: '^[0-9+\\-]+$',
+                },
+                email: {
+                    type: 'string',
+                    minLength: 5,
+                    format: 'email',
+                },
+            },
+        },
+        response: {
+            200: {
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                    updatedSupplier: {
+                        type: 'object',
+                        properties: {
+                            id: { type: 'integer' },
+                            company_name: { type: 'string' },
+                            street_address: { type: 'string' },
+                            area: { type: 'string' },
+                            telephone: { type: 'string' },
+                            email: { type: 'string' },
+                        },
+                    },
+                },
+            },
+        },
+    },
+    preHandler: pwHandler.authenticateToken,
+    handler: supplierController.updateSupplier,
+};
 
 //Radera
+module.exports.deleteSupplierOpts = {
+    schema: {
+        response: {
+            200: {
+                type: 'object',
+                properties: {
+                    message: { type: 'string' },
+                    deletedSupplier: {
+                        type: 'object',
+                        properties: {
+                            id: { type: 'integer' },
+                            company_name: { type: 'string' },
+                            street_address: { type: 'string' },
+                            area: { type: 'string' },
+                            telephone: { type: 'string' },
+                            email: { type: 'string' },
+                        },
+                    },
+                },
+            },
+        },
+    },
+    preHandler: pwHandler.authenticateToken,
+    handler: supplierController.deleteSupplier,
+};

@@ -101,7 +101,7 @@ module.exports.updateCategory = async (request, reply) => {
             id
         );
 
-        return reply.code(200).send({ message: 'Kategori uppdaterad', updatedCategory });
+        return reply.send({ message: 'Kategori uppdaterad', updatedCategory });
     } catch (error) {
         return reply.code(500).send(error);
     }
@@ -115,7 +115,7 @@ module.exports.deleteCategory = async (request, reply) => {
     try {
         const deletedCategory = await categoryService.findCatById(request.server.mysql, id);
 
-        //Finns ingen användare:
+        //Finns ingen sådan:
         if (!deletedCategory) {
             err = errorHandler.createError('Not found', 404, 'Hittade ingen kategori');
             return reply.code(404).send(err);
@@ -124,7 +124,7 @@ module.exports.deleteCategory = async (request, reply) => {
         //Kategorin hittades:
         const deleted = await categoryService.deleteCategory(request.server.mysql, id);
         return reply.send({
-            message: 'Kategori raderad!',
+            message: 'Kategori borttagen!',
             deletedCategory: {
                 id: deletedCategory.id,
                 category_name: deletedCategory.category_name,

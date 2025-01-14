@@ -143,6 +143,19 @@ module.exports.updateUser = async (request, reply) => {
             err = errorHandler.createError('Not found', 404, 'Hittade ingen användare');
             return reply.code(404).send(err);
         }
+        /* Hamnar vi här finns användaren.
+        Kontrollera att det är användaren som är inloggad som gör requesten för att ändra (så man inte kan ändra andras konton) */
+        await pwHandler.authenticateToken(request, reply);
+
+        //Namnet stämmer inte:
+        if (request.username !== user.username) {
+            err = errorHandler.createError(
+                'Unauthorized',
+                403,
+                'Du är obehörig att utföra denna åtgärd.'
+            );
+            return reply.code(403).send(err);
+        }
 
         //Hasha lösenord
         const hashedPassword = await pwHandler.hashPassword(password);

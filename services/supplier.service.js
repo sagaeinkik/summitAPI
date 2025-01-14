@@ -76,8 +76,9 @@ module.exports.updateSupplier = async (
             'UPDATE suppliers SET company_name = ?, street_address = ?, area = ?, telephone = ?, email = ? WHERE id = ?',
             [companyName, streetAddress, area, telephone, email, id]
         );
+
         return {
-            id: row[0].insertId,
+            id: id,
             company_name: companyName,
             street_address: streetAddress,
             area: area,

@@ -130,7 +130,6 @@ module.exports.updateUserOpts = {
             },
         },
     },
-    preHandler: pwHandler.authenticateToken,
     handler: userController.updateUser,
 };
 
