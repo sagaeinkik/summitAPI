@@ -1,6 +1,5 @@
 'use strict';
 
-const pwHandler = require('../../utils/passwordHandler');
 const logController = require('../../controllers/log.controller');
 
 //Allmänna loggar

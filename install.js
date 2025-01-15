@@ -100,18 +100,18 @@ async function suppliersTable() {
     }
 }
 
-//Produkter
+//Produkter - avrunda priser till närmsta krona (vi gjorde så på mitt jobb)
 async function productsTable() {
     try {
         //Skapa tabell
         await asyncQuery(`CREATE TABLE products (
             product_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-            product_name VARCHAR(255), 
+            product_name VARCHAR(255) NOT NULL, 
             size VARCHAR(255),
             extra VARCHAR(255),
-            amount INT, 
-            in_price INT, 
-            out_price INT,
+            amount INT NOT NULL, 
+            in_price INT NOT NULL, 
+            out_price INT NOT NULL,
             category_id INT NOT NULL, 
             supplier_id INT NOT NULL,
             FOREIGN KEY (category_id) REFERENCES categories(id), 
@@ -138,6 +138,39 @@ async function logTable() {
         console.log('Tabell Log skapades \n');
     } catch (error) {
         console.error('Något gick fel vid borttagning av log: ' + error);
+    }
+}
+
+/* INSERTS SÅ JAG SLIPPER GÖRA DET VARJE GÅNG: TA BORT INNAN INLÄMNING */
+
+async function inserts() {
+    try {
+        await asyncQuery(`INSERT INTO categories (category_name) VALUES ("Testkategori");`);
+        await asyncQuery(`INSERT INTO categories (category_name) VALUES ("Testkategori2");`);
+        await asyncQuery(`INSERT INTO categories (category_name) VALUES ("Testkategori3");`);
+        await asyncQuery(
+            `INSERT INTO suppliers (company_name, street_address, area, telephone, email) VALUES ("Testföretag 1", "Testgatan 10", "Tångböle", "06523213", "mail@mail.se");`
+        );
+        await asyncQuery(
+            `INSERT INTO suppliers (company_name, street_address, area, telephone, email) VALUES ("Testföretag 2", "Testgatan 20", "Trångsviken", "06523213", "mail@mail.com");`
+        );
+        await asyncQuery(
+            `INSERT INTO suppliers (company_name, street_address, area, telephone, email) VALUES ("BackCountry AB", "Testgatan 40", "Dalarna", "06523213", "hej@mail.com");`
+        );
+        await asyncQuery(
+            `INSERT INTO products (product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES ("Sten", "Small", "Grå", "15", 23, 79, 2, 1);`
+        );
+        await asyncQuery(
+            `INSERT INTO products (product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES ("Planka", "170", "Furu", "2", 52, 234, 2, 2);`
+        );
+        await asyncQuery(
+            `INSERT INTO products (product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES ("Åska", null, "Pang", "1", 123213, 743242349, 1, 3);`
+        );
+        await asyncQuery(
+            `INSERT INTO products (product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES ("Vän", "XL", "Grå", "15", 23, 79, 3, 1);`
+        );
+    } catch (error) {
+        console.error('Något gick fel vid djsakda' + error);
     }
 }
 
@@ -269,6 +302,8 @@ async function productView() {
         await suppliersTable();
         await productsTable();
         await logTable();
+
+        await inserts();
 
         //Triggers
         await categoryTriggers();

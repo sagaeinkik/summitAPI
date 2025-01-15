@@ -13,6 +13,7 @@ fastify.register(require('./routes/users.routes.js'));
 fastify.register(require('./routes/categories.routes.js'));
 fastify.register(require('./routes/suppliers.routes.js'));
 fastify.register(require('./routes/log.routes.js'));
+fastify.register(require('./routes/products.routes.js'));
 
 //Välkomstroute
 fastify.get('/', async (request, reply) => {

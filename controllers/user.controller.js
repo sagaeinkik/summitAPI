@@ -52,15 +52,15 @@ module.exports.addUser = async (request, reply) => {
     errorHandler.resetErrors(err);
     const { username, password } = request.body;
 
-    //Kolla att användarnamn och lösenord inte är tomma
-    const validUsername = errorHandler.checkEmpty(username, 'Användarnamn');
-    const validPassword = errorHandler.checkEmpty(password, 'Lösenord');
-
-    if (!validUsername.valid) {
-        return reply.code(validUsername.error.https_response.code).send(validUsername.error);
-    }
-    if (!validPassword.valid) {
-        return reply.code(validPassword.error.https_response.code).send(validPassword.error);
+    //Validering av fält
+    const validResults = [
+        errorHandler.checkEmpty(username, 'Användarnamn'),
+        errorHandler.checkEmpty(password, 'Lösenord'),
+    ];
+    //Kolla igenom validResults efter error
+    const validError = errorHandler.validateFields(reply, validResults);
+    if (validError) {
+        return validError;
     }
 
     try {
@@ -133,6 +133,17 @@ module.exports.updateUser = async (request, reply) => {
     errorHandler.resetErrors(err);
     const { username, password } = request.body;
     const id = request.params.id;
+
+    //Validering av fält
+    const validResults = [
+        errorHandler.checkEmpty(username, 'Användarnamn'),
+        errorHandler.checkEmpty(password, 'Lösenord'),
+    ];
+    //Kolla igenom validResults efter error
+    const validError = errorHandler.validateFields(reply, validResults);
+    if (validError) {
+        return validError;
+    }
 
     try {
         //Försök hitta användare enligt ID

@@ -12,11 +12,11 @@ const {
 
 async function usersRoutes(fastify) {
     fastify.get('/users', getAllUsersOpts); //Alla användare
-    fastify.get('/users/:id', getSingleUserOpts); //Enskild användare
+    fastify.get('/users/id=:id', getSingleUserOpts); //Enskild användare
     fastify.post('/signup', addUserOpts); //Lägg till
     fastify.post('/login', loginUserOpts); //Logga in
-    fastify.put('/users/:id', updateUserOpts); //Uppdatera
-    fastify.delete('/users/:id', deleteUserOpts); //Radera
+    fastify.put('/users/id=:id', updateUserOpts); //Uppdatera
+    fastify.delete('/users/id=:id', deleteUserOpts); //Radera
 }
 
 module.exports = usersRoutes;

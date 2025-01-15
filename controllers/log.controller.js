@@ -8,6 +8,7 @@ let err = errorHandler.createError();
 
 //Hämta senaste loggarna
 module.exports.getLogs = async (request, reply) => {
+    errorHandler.resetErrors(err);
     try {
         //Försök hämta loggar
         const logs = await logService.findLogs(request.server.mysql);
@@ -26,6 +27,7 @@ module.exports.getLogs = async (request, reply) => {
 
 //Hämta loggar enligt handling
 module.exports.getActionLogs = async (request, reply) => {
+    errorHandler.resetErrors(err);
     const action = request.params.action;
     try {
         const logs = await logService.findActions(request.server.mysql, action);

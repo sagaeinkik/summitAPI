@@ -56,27 +56,27 @@ module.exports.getSupplierById = async (request, reply) => {
 //Lägg till
 module.exports.addSupplier = async (request, reply) => {
     errorHandler.resetErrors(err);
-    const { company_name, street_address, area, telephone, email } = request.body;
+    const { companyName, streetAddress, area, telephone, email } = request.body;
 
-    //Validera fälten
-    const nameCheck = errorHandler.checkEmpty(company_name, 'Företagsnamn');
-    const telCheck = errorHandler.checkEmpty(telephone, 'Telefon');
-    const emailCheck = errorHandler.checkEmpty(email, 'E-post');
+    //Array med valideringsresultat av fält
+    const validationResults = [
+        errorHandler.checkEmpty(companyName, 'companyName'),
+        errorHandler.checkEmpty(telephone, 'Telefon'),
+        errorHandler.checkEmpty(email, 'Epost'),
+    ];
 
-    //Det här är inte det snyggaste jag gjort (förlåt) men...
-    if (!nameCheck.valid) {
-        return reply.code(nameCheck.error.https_response.code).send(nameCheck.error);
-    } else if (!telCheck.valid) {
-        return reply.code(telCheck.error.https_response.code).send(telCheck.error);
-    } else if (!emailCheck.valid) {
-        return reply.code(emailCheck.error.https_response.code).send(emailCheck.error);
+    //Leta igenom valideringsarrayen
+    const validationError = errorHandler.validateFields(reply, validationResults);
+    //Kolla om det fanns nå
+    if (validationError) {
+        return validationError;
     }
 
     try {
         //Kolla om leverantörnamn redan finns
         const existingCompany = await supplierService.findSupplierByName(
             request.server.mysql,
-            company_name
+            companyName
         );
 
         if (existingCompany) {
@@ -87,8 +87,8 @@ module.exports.addSupplier = async (request, reply) => {
         //Lägg till leverantör
         const addedCompany = await supplierService.insertSupplier(
             request.server.mysql,
-            company_name,
-            street_address,
+            companyName,
+            streetAddress,
             area,
             telephone,
             email
@@ -102,22 +102,23 @@ module.exports.addSupplier = async (request, reply) => {
 
 //Uppdatera
 module.exports.updateSupplier = async (request, reply) => {
-    errorHandler.resetErrors();
+    errorHandler.resetErrors(err);
 
     const id = request.params.id;
-    const { company_name, street_address, area, telephone, email } = request.body;
+    const { companyName, streetAddress, area, telephone, email } = request.body;
 
-    //Validera fält
-    const nameCheck = errorHandler.checkEmpty(company_name, 'Företagsnamn');
-    const telCheck = errorHandler.checkEmpty(telephone, 'Telefon');
-    const emailCheck = errorHandler.checkEmpty(email, 'E-post');
+    //Array med valideringsresultat av fält
+    const validationResults = [
+        errorHandler.checkEmpty(companyName, 'Företagsnamn'),
+        errorHandler.checkEmpty(telephone, 'Telefon'),
+        errorHandler.checkEmpty(email, 'Epost'),
+    ];
 
-    if (!nameCheck.valid) {
-        return reply.code(nameCheck.error.https_response.code).send(nameCheck.error);
-    } else if (!telCheck.valid) {
-        return reply.code(telCheck.error.https_response.code).send(telCheck.error);
-    } else if (!emailCheck.valid) {
-        return reply.code(emailCheck.error.https_response.code).send(emailCheck.error);
+    //Leta igenom valideringsarrayen
+    const validationError = errorHandler.validateFields(reply, validationResults);
+    //Kolla om det fanns nå
+    if (validationError) {
+        return validationError;
     }
 
     try {
@@ -135,8 +136,8 @@ module.exports.updateSupplier = async (request, reply) => {
         //Uppdatera
         const updatedSupplier = await supplierService.updateSupplier(
             request.server.mysql,
-            company_name,
-            street_address,
+            companyName,
+            streetAddress,
             area,
             telephone,
             email,
@@ -174,8 +175,8 @@ module.exports.deleteSupplier = async (request, reply) => {
             message: 'Leverantör borttagen!',
             deletedSupplier: {
                 id: deletedSupplier.id,
-                company_name: deletedSupplier.company_name,
-                street_address: deletedSupplier.street_address,
+                companyName: deletedSupplier.companyName,
+                streetAddress: deletedSupplier.streetAddress,
                 area: deletedSupplier.area,
                 telephone: deletedSupplier.telephone,
                 email: deletedSupplier.email,

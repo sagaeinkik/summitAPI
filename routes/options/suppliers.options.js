@@ -51,14 +51,14 @@ module.exports.addSupplierOpts = {
     schema: {
         body: {
             type: 'object',
-            required: ['company_name', 'telephone', 'email'],
+            required: ['companyName', 'telephone', 'email'],
             properties: {
-                company_name: {
+                companyName: {
                     type: 'string',
                     minLength: 2,
                     maxLength: 255,
                 },
-                street_address: { type: 'string' },
+                streetAddress: { type: 'string' },
                 area: { type: 'string' },
                 telephone: {
                     type: 'string',
@@ -101,14 +101,14 @@ module.exports.updateSupplierOpts = {
     schema: {
         body: {
             type: 'object',
-            required: ['company_name', 'telephone', 'email'],
+            required: ['companyName', 'telephone', 'email'],
             properties: {
-                company_name: {
+                companyName: {
                     type: 'string',
                     minLength: 2,
                     maxLength: 255,
                 },
-                street_address: { type: 'string' },
+                streetAddress: { type: 'string' },
                 area: { type: 'string' },
                 telephone: {
                     type: 'string',

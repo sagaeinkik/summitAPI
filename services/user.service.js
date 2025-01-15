@@ -22,10 +22,14 @@ module.exports.findUserById = async (mysql, id) => {
     }
 };
 
-//Hitta specifik användare enligt användarnamn
+//Hitta specifik användare enligt användarnamn (användarnamn måste vara unika)
 module.exports.findUserByUsername = async (mysql, username) => {
     try {
-        const [row] = await mysql.query('SELECT * FROM users WHERE username = ?', username);
+        //Case insensitive
+        const [row] = await mysql.query(
+            'SELECT * FROM users WHERE username COLLATE utf8mb4_general_ci = ?',
+            username
+        );
         return row[0];
     } catch (error) {
         console.error('Något gick fel vid hämtning av användare: ' + err);
@@ -40,6 +44,7 @@ module.exports.insertUser = async (mysql, username, password) => {
             username,
             password,
         ]);
+        //Returnera objektet istället för mysql-info
         return {
             id: rows[0].insertId,
             username: username,
@@ -64,13 +69,14 @@ module.exports.deleteUser = async (mysql, id) => {
 //Byt användarnamn/lösenord
 module.exports.updateUser = async (mysql, id, username, password) => {
     try {
-        const rows = await mysql.query('UPDATE users SET username = ?, password = ? WHERE id = ?', [
-            username,
-            password,
-            id,
-        ]);
+        const [rows] = await mysql.query(
+            'UPDATE users SET username = ?, password = ? WHERE id = ?',
+            [username, password, id]
+        );
+
+        //Returnera objektet istället för mysql-info
         return {
-            id: rows[0].insertId, //Detta funkar i den här filen och jag vet inte varför
+            id: id,
             username: username,
         };
     } catch (err) {

@@ -22,10 +22,14 @@ module.exports.findCatById = async (mysql, id) => {
     }
 };
 
-//Kategori enligt namn
+//Kategori enligt namn (eftersom category_name är satt till UNIQUE)
 module.exports.findCatByName = async (mysql, name) => {
     try {
-        const [rows] = await mysql.query('SELECT * FROM categories WHERE category_name = ?', name);
+        //Gör case insensitive
+        const [rows] = await mysql.query(
+            'SELECT * FROM categories WHERE category_name COLLATE utf8mb4_general_ci = ?',
+            name
+        );
         return rows[0];
     } catch (error) {
         console.error('Något gick fel vid hämtning av kategori: ' + error);
@@ -40,6 +44,8 @@ module.exports.insertCategory = async (mysql, category) => {
             'INSERT INTO categories (category_name) VALUES (?)',
             category
         );
+
+        //Returnera objektet istället för mysql-info
         return {
             id: rows[0].insertId,
             category_name: category,
@@ -57,6 +63,8 @@ module.exports.updateCategory = async (mysql, category, id) => {
             category,
             id,
         ]);
+
+        //Returnera objektet istället för mysql-info
         return {
             id: id,
             category_name: category,

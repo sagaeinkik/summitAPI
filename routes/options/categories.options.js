@@ -43,9 +43,9 @@ module.exports.addCatOpts = {
     schema: {
         body: {
             type: 'object',
-            required: ['category_name'],
+            required: ['categoryName'],
             properties: {
-                category_name: {
+                categoryName: {
                     type: 'string',
                     minLength: 2,
                     maxLength: 255,
@@ -77,9 +77,9 @@ module.exports.updateCatOpts = {
     schema: {
         body: {
             type: 'object',
-            required: ['category_name'],
+            required: ['categoryName'],
             properties: {
-                category_name: {
+                categoryName: {
                     type: 'string',
                     minLength: 2,
                     maxLength: 255,

@@ -22,10 +22,14 @@ module.exports.findSupplierById = async (mysql, id) => {
     }
 };
 
-//Leverantör enligt namn
+//Leverantör enligt namn (company_name är satt till UNIQUE)
 module.exports.findSupplierByName = async (mysql, name) => {
     try {
-        const [row] = await mysql.query('SELECT * FROM suppliers WHERE company_name = ?', name);
+        //Gör case insensitive
+        const [row] = await mysql.query(
+            'SELECT * FROM suppliers WHERE company_name COLLATE utf8mb4_general_ci = ?',
+            name
+        );
         return row[0];
     } catch (error) {
         console.error('Något gick fel vid hämtning av leverantör: ' + error);
@@ -47,6 +51,7 @@ module.exports.insertSupplier = async (
             'INSERT INTO suppliers (company_name, street_address, area, telephone, email) VALUES (?, ?, ?, ?, ?)',
             [companyName, streetAddress, area, telephone, email]
         );
+        //Returnera objektet istället för mysql-info
         return {
             id: row[0].insertId,
             company_name: companyName,
@@ -76,7 +81,7 @@ module.exports.updateSupplier = async (
             'UPDATE suppliers SET company_name = ?, street_address = ?, area = ?, telephone = ?, email = ? WHERE id = ?',
             [companyName, streetAddress, area, telephone, email, id]
         );
-
+        //Returnera objektet istället för mysql-info
         return {
             id: id,
             company_name: companyName,
