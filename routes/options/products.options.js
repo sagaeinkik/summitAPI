@@ -12,7 +12,7 @@ module.exports.getAllProdsOpts = {
                 items: {
                     type: 'object',
                     properties: {
-                        product_id: { type: 'integer' },
+                        product_id: { type: 'string' },
                         product_name: { type: 'string' },
                         size: { type: 'string' },
                         extra: { type: 'string' },
@@ -38,7 +38,7 @@ module.exports.getProdsByCatOpts = {
                 items: {
                     type: 'object',
                     properties: {
-                        product_id: { type: 'integer' },
+                        product_id: { type: 'string' },
                         product_name: { type: 'string' },
                         size: { type: 'string' },
                         extra: { type: 'string' },
@@ -64,7 +64,7 @@ module.exports.getProdsBySuppOpts = {
                 items: {
                     type: 'object',
                     properties: {
-                        product_id: { type: 'integer' },
+                        product_id: { type: 'string' },
                         product_name: { type: 'string' },
                         size: { type: 'string' },
                         extra: { type: 'string' },
@@ -88,7 +88,7 @@ module.exports.getProdByIdOpts = {
             200: {
                 type: 'object',
                 properties: {
-                    product_id: { type: 'integer' },
+                    product_id: { type: 'string' },
                     product_name: { type: 'string' },
                     size: { type: 'string' },
                     extra: { type: 'string' },
@@ -109,8 +109,22 @@ module.exports.addProdOpts = {
     schema: {
         body: {
             type: 'object',
-            required: ['productName', 'amount', 'inPrice', 'outPrice', 'categoryId', 'supplierId'],
+            required: [
+                'productId',
+                'productName',
+                'amount',
+                'inPrice',
+                'outPrice',
+                'categoryId',
+                'supplierId',
+            ],
             properties: {
+                productId: {
+                    type: 'string',
+                    minLength: 2,
+                    maxLength: 30,
+                    pattern: '^[0-9]+$',
+                },
                 productName: {
                     type: 'string',
                     minLength: 2,
@@ -131,7 +145,7 @@ module.exports.addProdOpts = {
                     addedProduct: {
                         type: 'object',
                         properties: {
-                            product_id: { type: 'integer' },
+                            product_id: { type: 'string' },
                             product_name: { type: 'string' },
                             size: { type: 'string' },
                             extra: { type: 'string' },
@@ -154,8 +168,22 @@ module.exports.updateProdOpts = {
     schema: {
         body: {
             type: 'object',
-            required: ['productName', 'amount', 'inPrice', 'outPrice', 'categoryId', 'supplierId'],
+            required: [
+                'productId',
+                'productName',
+                'amount',
+                'inPrice',
+                'outPrice',
+                'categoryId',
+                'supplierId',
+            ],
             properties: {
+                productId: {
+                    type: 'string',
+                    minLength: 2,
+                    maxLength: 30,
+                    pattern: '^[0-9]+$',
+                },
                 productName: {
                     type: 'string',
                     minLength: 2,
@@ -176,7 +204,7 @@ module.exports.updateProdOpts = {
                     updatedProduct: {
                         type: 'object',
                         properties: {
-                            product_id: { type: 'integer' },
+                            product_id: { type: 'string' },
                             product_name: { type: 'string' },
                             size: { type: 'string' },
                             extra: { type: 'string' },
@@ -205,7 +233,7 @@ module.exports.deleteProdOpts = {
                     deletedProduct: {
                         type: 'object',
                         properties: {
-                            product_id: { type: 'integer' },
+                            product_id: { type: 'string' },
                             product_name: { type: 'string' },
                             size: { type: 'string' },
                             extra: { type: 'string' },
@@ -236,7 +264,7 @@ module.exports.deleteProdsInCatOpts = {
                         items: {
                             type: 'object',
                             properties: {
-                                product_id: { type: 'integer' },
+                                product_id: { type: 'string' },
                                 product_name: { type: 'string' },
                                 size: { type: 'string' },
                                 extra: { type: 'string' },
@@ -268,7 +296,7 @@ module.exports.deleteProdsbySuppOpts = {
                         items: {
                             type: 'object',
                             properties: {
-                                product_id: { type: 'integer' },
+                                product_id: { type: 'string' },
                                 product_name: { type: 'string' },
                                 size: { type: 'string' },
                                 extra: { type: 'string' },

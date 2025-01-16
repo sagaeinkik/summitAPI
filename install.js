@@ -91,7 +91,7 @@ async function suppliersTable() {
             company_name VARCHAR(255) UNIQUE NOT NULL,
             street_address VARCHAR(255),
             area VARCHAR(255),
-            telephone VARCHAR(255),
+            telephone VARCHAR(30),
             email VARCHAR(255)
             )`);
         console.log('Tabell Suppliers skapades \n');
@@ -105,10 +105,10 @@ async function productsTable() {
     try {
         //Skapa tabell
         await asyncQuery(`CREATE TABLE products (
-            product_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+            product_id VARCHAR(30) PRIMARY KEY NOT NULL, 
             product_name VARCHAR(255) NOT NULL, 
-            size VARCHAR(255),
-            extra VARCHAR(255),
+            size VARCHAR(30),
+            extra VARCHAR(30),
             amount INT NOT NULL, 
             in_price INT NOT NULL, 
             out_price INT NOT NULL,
@@ -158,16 +158,16 @@ async function inserts() {
             `INSERT INTO suppliers (company_name, street_address, area, telephone, email) VALUES ("BackCountry AB", "Testgatan 40", "Dalarna", "06523213", "hej@mail.com");`
         );
         await asyncQuery(
-            `INSERT INTO products (product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES ("Sten", "Small", "Grå", "15", 23, 79, 2, 1);`
+            `INSERT INTO products (product_id, product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES ("4", "Sten", "Small", "Grå", "15", 23, 79, 2, 1);`
         );
         await asyncQuery(
-            `INSERT INTO products (product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES ("Planka", "170", "Furu", "2", 52, 234, 2, 2);`
+            `INSERT INTO products (product_id, product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES ("1", "Planka", "170", "Furu", "2", 52, 234, 2, 2);`
         );
         await asyncQuery(
-            `INSERT INTO products (product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES ("Åska", null, "Pang", "1", 123213, 743242349, 1, 3);`
+            `INSERT INTO products (product_id, product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES ("2", "Åska", null, "Pang", "1", 123213, 743242349, 1, 3);`
         );
         await asyncQuery(
-            `INSERT INTO products (product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES ("Vän", "XL", "Grå", "15", 23, 79, 3, 1);`
+            `INSERT INTO products (product_id, product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES ("3", "Vän", "XL", "Grå", "15", 23, 79, 3, 1);`
         );
     } catch (error) {
         console.error('Något gick fel vid djsakda' + error);

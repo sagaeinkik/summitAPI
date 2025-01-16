@@ -79,6 +79,7 @@ module.exports.findProdsBySuppId = async (mysql, id) => {
 //Lägg till produkt
 module.exports.insertProduct = async (
     mysql,
+    productId,
     productName,
     size,
     extra,
@@ -90,13 +91,13 @@ module.exports.insertProduct = async (
 ) => {
     try {
         const row = await mysql.query(
-            `INSERT INTO products (product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [productName, size, extra, amount, inPrice, outPrice, catId, suppId]
+            `INSERT INTO products (product_id, product_name, size, extra, amount, in_price, out_price, category_id, supplier_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [productId, productName, size, extra, amount, inPrice, outPrice, catId, suppId]
         );
 
         //Returnera objektet istället för mysql-info
         return {
-            id: row[0].insertId,
+            id: productId,
             product_name: productName,
             size: size,
             extra: extra,
@@ -128,6 +129,7 @@ module.exports.updateProduct = async (
     try {
         const row = await mysql.query(
             `UPDATE products SET
+            product_id = ?,
             product_name = ?, 
             size = ?, 
             extra = ?, 
@@ -138,7 +140,7 @@ module.exports.updateProduct = async (
             supplier_id = ?
             WHERE 
             product_id = ?`,
-            [productName, size, extra, amount, inPrice, outPrice, catId, suppId, prodId]
+            [prodId, productName, size, extra, amount, inPrice, outPrice, catId, suppId, prodId]
         );
 
         //Returnera objektet istället för mysql-info

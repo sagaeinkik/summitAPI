@@ -33,13 +33,10 @@ module.exports.getProdsByCat = async (request, reply) => {
     errorHandler.resetErrors(err);
 
     //Hämta kategori
-    const category_name = request.params.category;
+    const categoryName = request.params.category;
 
     try {
-        const products = await productService.findProdByCatName(
-            request.server.mysql,
-            category_name
-        );
+        const products = await productService.findProdByCatName(request.server.mysql, categoryName);
 
         //Kontrollera längd
         if (products.length === 0) {
@@ -63,12 +60,12 @@ module.exports.getProdsBySupplier = async (request, reply) => {
     errorHandler.resetErrors(err);
 
     //Hämta leverantör
-    let supplier_name = request.params.supplier;
+    let supplierName = request.params.supplier;
 
     try {
         const products = await productService.findProdBySupplierName(
             request.server.mysql,
-            supplier_name
+            supplierName
         );
 
         if (products.length === 0) {
@@ -91,10 +88,10 @@ module.exports.getProdsBySupplier = async (request, reply) => {
 module.exports.getProdById = async (request, reply) => {
     errorHandler.resetErrors(err);
 
-    const product_id = request.params.id;
+    const productId = request.params.id;
 
     try {
-        const product = await productService.findProdById(request.server.mysql, product_id);
+        const product = await productService.findProdById(request.server.mysql, productId);
 
         if (!product) {
             err = errorHandler.createError('Not found', 404, 'Ingen produkt hittades');
@@ -113,11 +110,12 @@ module.exports.addNewProduct = async (request, reply) => {
     errorHandler.resetErrors(err);
 
     //Hämta alla params
-    let { productName, size, extra, amount, inPrice, outPrice, categoryId, supplierId } =
+    let { productId, productName, size, extra, amount, inPrice, outPrice, categoryId, supplierId } =
         request.body;
 
     //Validera
     const validationResults = [
+        errorHandler.checkEmpty(productId, 'productId'),
         errorHandler.checkEmpty(productName, 'productName'),
         errorHandler.checkEmpty(amount, 'amount'),
         errorHandler.checkEmpty(inPrice, 'inPrice'),
@@ -135,6 +133,7 @@ module.exports.addNewProduct = async (request, reply) => {
         //Lägg till
         const addedProduct = await productService.insertProduct(
             request.server.mysql,
+            productId,
             productName,
             size,
             extra,
@@ -162,6 +161,7 @@ module.exports.changeProduct = async (request, reply) => {
 
     //Validering
     const validationResults = [
+        errorHandler.checkEmpty(productId, 'productId'),
         errorHandler.checkEmpty(productName, 'productName'),
         errorHandler.checkEmpty(amount, 'amount'),
         errorHandler.checkEmpty(inPrice, 'inPrice'),
@@ -190,6 +190,7 @@ module.exports.changeProduct = async (request, reply) => {
         //Uppdatera
         const updatedProduct = await productService.updateProduct(
             request.server.mysql,
+            productId,
             productName,
             size,
             extra,

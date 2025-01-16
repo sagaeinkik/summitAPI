@@ -54,6 +54,8 @@ api/
 Det finns totalt fem scheman (products, categories, suppliers, users samt log) och en vy (products_view) i databasen. Denna vy liknar products-schemat med skillnaden att den inkluderar leverantörnamn och kategorinamn snarare än ID som foreign keys.  
 Products, categories och suppliers har tre triggers vardera som alla loggar inserts, updates och deletes i log-schemat.
 
+Tabellen `products` använder VARCHAR som ID istället för integer, eftersom det naturligtvis ska representera streckkoder, och användare ska kunna ange streckkoderna när en ny produkt registreras. EAN och ISBN kan inledas med 0.
+
 Användarnamn, företagsnamn och kategorinamn måste vara unika. Innan en ny rad kan läggas till kontrolleras först om det redan finns en rad med samma namn.  
 Detta har gjorts case insensitive med `COLLATE utf8mb4_general_ci` i SELECT-frågorna för berörda tabeller.
 
