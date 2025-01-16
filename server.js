@@ -25,7 +25,7 @@ fastify.get('/', async (request, reply) => {
 
 //App-inställningar
 let port = process.env.PORT || 3000;
-const connectionString = `mysql://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/${process.env.DB_DATABASE}`;
+const connectionString = process.env.DB_URL;
 
 //Databasanslutning
 async function dbConnect() {
@@ -45,7 +45,7 @@ async function dbConnect() {
 const start = async () => {
     try {
         dbConnect();
-        await fastify.listen({ port: port });
+        await fastify.listen({ port: port, host: '0.0.0.0' });
         console.log('Succé! Servern är igång på port: ' + port);
     } catch (err) {
         console.error('Något gick fel vid start av applikationen: ' + err);

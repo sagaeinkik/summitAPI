@@ -2,7 +2,8 @@
 const fastify = require('fastify')();
 require('dotenv').config();
 
-const connectionString = `mysql://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/${process.env.DB_DATABASE}`;
+/* const connectionString = `mysql://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/${process.env.DB_DATABASE}`; */
+const connectionString = process.env.DB_URL;
 
 //Databasanslutning
 async function dbConnect() {
@@ -142,7 +143,7 @@ async function logTable() {
 }
 
 /* INSERTS OM MAN INTE VILL SKRIVA SJÄLV*/
-/* 
+
 async function inserts() {
     try {
         await asyncQuery(`INSERT INTO categories (category_name) VALUES ("Testkategori");`);
@@ -172,7 +173,7 @@ async function inserts() {
     } catch (error) {
         console.error('Något gick fel vid djsakda' + error);
     }
-} */
+}
 
 /* TRIGGERS */
 
@@ -303,7 +304,7 @@ async function productView() {
         await productsTable();
         await logTable();
 
-        /* await inserts(); */
+        await inserts();
 
         //Triggers
         await categoryTriggers();
