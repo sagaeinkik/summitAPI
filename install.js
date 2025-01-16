@@ -141,8 +141,8 @@ async function logTable() {
     }
 }
 
-/* INSERTS SÅ JAG SLIPPER GÖRA DET VARJE GÅNG: TA BORT INNAN INLÄMNING */
-
+/* INSERTS OM MAN INTE VILL SKRIVA SJÄLV*/
+/* 
 async function inserts() {
     try {
         await asyncQuery(`INSERT INTO categories (category_name) VALUES ("Testkategori");`);
@@ -172,7 +172,7 @@ async function inserts() {
     } catch (error) {
         console.error('Något gick fel vid djsakda' + error);
     }
-}
+} */
 
 /* TRIGGERS */
 
@@ -303,7 +303,7 @@ async function productView() {
         await productsTable();
         await logTable();
 
-        await inserts();
+        /* await inserts(); */
 
         //Triggers
         await categoryTriggers();
