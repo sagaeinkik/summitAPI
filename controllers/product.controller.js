@@ -154,14 +154,15 @@ module.exports.addNewProduct = async (request, reply) => {
 module.exports.changeProduct = async (request, reply) => {
     errorHandler.resetErrors(err);
 
-    const productId = request.params.id;
+    const oldProductId = request.params.id;
+    const newProductId = request.body.productId;
 
     const { productName, size, extra, amount, inPrice, outPrice, categoryId, supplierId } =
         request.body;
 
     //Validering
     const validationResults = [
-        errorHandler.checkEmpty(productId, 'productId'),
+        errorHandler.checkEmpty(newProductId, 'productId'),
         errorHandler.checkEmpty(productName, 'productName'),
         errorHandler.checkEmpty(amount, 'amount'),
         errorHandler.checkEmpty(inPrice, 'inPrice'),
@@ -177,7 +178,7 @@ module.exports.changeProduct = async (request, reply) => {
 
     try {
         //Hämta rad att uppdatera
-        const prodToUpdate = await productService.findProdById(request.server.mysql, productId);
+        const prodToUpdate = await productService.findProdById(request.server.mysql, oldProductId);
         if (!prodToUpdate) {
             err = errorHandler.createError(
                 'Not found',
@@ -190,7 +191,7 @@ module.exports.changeProduct = async (request, reply) => {
         //Uppdatera
         const updatedProduct = await productService.updateProduct(
             request.server.mysql,
-            productId,
+            newProductId,
             productName,
             size,
             extra,
@@ -199,7 +200,7 @@ module.exports.changeProduct = async (request, reply) => {
             outPrice,
             categoryId,
             supplierId,
-            productId
+            oldProductId
         );
 
         return reply.send({ message: 'Produkt ändrad!', updatedProduct });

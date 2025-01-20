@@ -108,7 +108,7 @@ module.exports.insertProduct = async (
             supplier_id: suppId,
         };
     } catch (error) {
-        console.error('Något gick fel vid hämtning av samtliga produkter: ' + error);
+        console.error('Något gick fel vid tillägg av produkt: ' + error);
         throw error;
     }
 };
@@ -116,6 +116,7 @@ module.exports.insertProduct = async (
 //Uppdatera produkt
 module.exports.updateProduct = async (
     mysql,
+    newProdId,
     productName,
     size,
     extra,
@@ -124,7 +125,7 @@ module.exports.updateProduct = async (
     outPrice,
     catId,
     suppId,
-    prodId
+    oldProdId
 ) => {
     try {
         const row = await mysql.query(
@@ -140,12 +141,23 @@ module.exports.updateProduct = async (
             supplier_id = ?
             WHERE 
             product_id = ?`,
-            [prodId, productName, size, extra, amount, inPrice, outPrice, catId, suppId, prodId]
+            [
+                newProdId,
+                productName,
+                size,
+                extra,
+                amount,
+                inPrice,
+                outPrice,
+                catId,
+                suppId,
+                oldProdId,
+            ]
         );
 
         //Returnera objektet istället för mysql-info
         return {
-            id: prodId,
+            product_id: newProdId,
             product_name: productName,
             size: size,
             extra: extra,
@@ -156,7 +168,7 @@ module.exports.updateProduct = async (
             supplier_id: suppId,
         };
     } catch (error) {
-        console.error('Något gick fel vid hämtning av samtliga produkter: ' + error);
+        console.error('Något gick fel vid uppdatering av produkt: ' + error);
         throw error;
     }
 };
@@ -167,7 +179,7 @@ module.exports.deleteProduct = async (mysql, id) => {
         const row = await mysql.query('DELETE FROM products WHERE product_id = ?', id);
         return row;
     } catch (error) {
-        console.error('Något gick fel vid hämtning av samtliga produkter: ' + error);
+        console.error('Något gick fel vid radering: ' + error);
         throw error;
     }
 };

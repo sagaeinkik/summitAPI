@@ -189,6 +189,8 @@ module.exports.updateProdOpts = {
                     minLength: 2,
                     maxLength: 255,
                 },
+                size: { type: 'string' },
+                extra: { type: 'string' },
                 amount: { type: 'integer' },
                 inPrice: { type: 'integer' },
                 outPrice: { type: 'integer' },
