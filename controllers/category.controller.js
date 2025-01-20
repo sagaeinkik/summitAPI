@@ -51,16 +51,16 @@ module.exports.addCategory = async (request, reply) => {
     const { categoryName } = request.body;
     try {
         // Kontrollera att fält inte är tomt
-        const stringCheck = errorHandler.checkEmpty({ categoryName }, 'Kategori');
-        if (!stringCheck.valid) {
-            //Skicka det error som skapas av checkEmpty-funktionen
-            return reply.code(stringCheck.error.https_response.code).send(stringCheck.error);
+
+        const validResults = [errorHandler.checkEmpty(categoryName, 'Kategori')];
+        const validError = errorHandler.validateFields(reply, validResults);
+
+        if (validError) {
+            return validError;
         }
 
         //Kolla om kategori redan finns
-        const existingCat = await categoryService.findCatByName(request.server.mysql, {
-            categoryName,
-        });
+        const existingCat = await categoryService.findCatByName(request.server.mysql, categoryName);
 
         if (existingCat) {
             err = errorHandler.createError('Conflict', 409, 'Kategori finns redan');
@@ -68,9 +68,10 @@ module.exports.addCategory = async (request, reply) => {
         }
 
         //Har vi kommit såhär långt kan vi lägga till
-        const addedCategory = await categoryService.insertCategory(request.server.mysql, {
-            categoryName,
-        });
+        const addedCategory = await categoryService.insertCategory(
+            request.server.mysql,
+            categoryName
+        );
         return reply.code(201).send({ message: 'Kategori tillagd', addedCategory });
     } catch (error) {
         return reply.code(500).send(error);
@@ -85,10 +86,11 @@ module.exports.updateCategory = async (request, reply) => {
 
     try {
         // Kontrollera att fält inte är tomt
-        const stringCheck = errorHandler.checkEmpty({ categoryName }, 'Kategori');
-        if (!stringCheck.valid) {
-            //Skicka det error som skapas av checkEmpty-funktionen
-            return reply.code(stringCheck.error.https_response.code).send(stringCheck.error);
+        const validResults = [errorHandler.checkEmpty(categoryName, 'Kategori')];
+        const validError = errorHandler.validateFields(reply, validResults);
+
+        if (validError) {
+            return validError;
         }
 
         //Kolla så kategorin finns
