@@ -121,7 +121,7 @@ module.exports.addProdOpts = {
             properties: {
                 productId: {
                     type: 'string',
-                    minLength: 2,
+                    minLength: 1,
                     maxLength: 30,
                     pattern: '^[0-9]+$',
                 },
@@ -183,7 +183,7 @@ module.exports.updateProdOpts = {
             properties: {
                 productId: {
                     type: 'string',
-                    minLength: 2,
+                    minLength: 1,
                     maxLength: 30,
                     pattern: '^[0-9]+$',
                 },
