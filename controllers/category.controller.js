@@ -103,7 +103,7 @@ module.exports.updateCategory = async (request, reply) => {
         //Uppdatera
         const updatedCategory = await categoryService.updateCategory(
             request.server.mysql,
-            catName,
+            categoryName,
             id
         );
 
