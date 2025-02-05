@@ -125,8 +125,8 @@ module.exports.updateUserOpts = {
                         properties: {
                             id: { type: 'integer' },
                             username: { type: 'string' },
-                            token: { type: 'string' },
                         },
+                        token: { type: 'string' },
                     },
                 },
             },
