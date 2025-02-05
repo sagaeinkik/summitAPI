@@ -172,9 +172,14 @@ module.exports.updateUser = async (request, reply) => {
 
         //Uppdatera användare
         await userService.updateUser(request.server.mysql, id, username, hashedPassword);
+
+        //Skapa ny token för att reflektera användarnamn
+        const newToken = await pwHandler.createToken(username);
+
         return reply.send({
             message: 'Användare uppdaterad!',
             updatedUser: { id: id, username: username },
+            token: newToken,
         });
     } catch (error) {
         return reply.code(500).send(error);
