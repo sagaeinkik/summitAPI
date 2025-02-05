@@ -75,13 +75,17 @@ module.exports.addUser = async (request, reply) => {
         //Hasha lösenord
         const hashedPassword = await pwHandler.hashPassword(password);
         //Skapa användar-objekt
-        let newUser = {
+        /* let newUser = {
             username: username,
             password: hashedPassword,
-        };
+        }; */
 
         //Lägg till användare
-        await userService.insertUser(request.server.mysql, username, hashedPassword);
+        const newUser = await userService.insertUser(
+            request.server.mysql,
+            username,
+            hashedPassword
+        );
         //Skapa token
         const token = pwHandler.createToken(username);
 
@@ -115,7 +119,7 @@ module.exports.loginUser = async (request, reply) => {
             const token = pwHandler.createToken(username);
             return reply.send({
                 message: 'Inloggning lyckades',
-                loggedInUser: { username: username },
+                loggedInUser: { id: user.id, username: username },
                 token: token,
             });
         } else {
