@@ -74,11 +74,6 @@ module.exports.addUser = async (request, reply) => {
 
         //Hasha lösenord
         const hashedPassword = await pwHandler.hashPassword(password);
-        //Skapa användar-objekt
-        /* let newUser = {
-            username: username,
-            password: hashedPassword,
-        }; */
 
         //Lägg till användare
         const newUser = await userService.insertUser(
