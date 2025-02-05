@@ -86,6 +86,7 @@ module.exports.loginUserOpts = {
                     loggedInUser: {
                         type: 'object',
                         properties: {
+                            id: { type: 'integer' },
                             username: { type: 'string' },
                         },
                     },
