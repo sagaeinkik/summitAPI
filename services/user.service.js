@@ -26,10 +26,7 @@ module.exports.findUserById = async (mysql, id) => {
 module.exports.findUserByUsername = async (mysql, username) => {
     try {
         //Case insensitive
-        const [row] = await mysql.query(
-            'SELECT * FROM users WHERE username COLLATE utf8mb4_general_ci = ?',
-            username
-        );
+        const [row] = await mysql.query('SELECT * FROM users WHERE username = ?', username);
         return row[0];
     } catch (error) {
         console.error('Något gick fel vid hämtning av användare: ' + err);

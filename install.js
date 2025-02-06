@@ -36,6 +36,7 @@ function asyncQuery(query, params = []) {
 }
 
 /* QUERIES */
+
 //Ta bort alla
 async function dropAllTables() {
     try {

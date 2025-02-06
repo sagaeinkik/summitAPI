@@ -34,12 +34,14 @@ module.exports.authenticateToken = async (request, reply) => {
     //Har vi kommit hit kan vi jämföra token med nyckel
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
         if (err) {
+            console.error('Tokenverifieringsfel:', err);
             err = errHandler.createError('Unauthorized', 403, 'Invalid Token');
             return reply.code(403).send(err);
         }
 
         request.username = user.username;
     });
+    return;
 };
 
 //Hasha lösenord

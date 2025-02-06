@@ -112,6 +112,7 @@ module.exports.loginUser = async (request, reply) => {
         if (authorized) {
             //Skapa token
             const token = pwHandler.createToken(username);
+
             return reply.send({
                 message: 'Inloggning lyckades',
                 loggedInUser: { id: user.id, username: username },
