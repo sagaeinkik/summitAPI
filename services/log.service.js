@@ -1,6 +1,6 @@
 'use strict';
 
-//Hämta 10 loggar
+//Hämta 15 loggar
 module.exports.findLogs = async (mysql) => {
     try {
         let [rows] = await mysql.query('SELECT * FROM log ORDER BY id DESC LIMIT 15');
@@ -23,7 +23,7 @@ module.exports.findLogs = async (mysql) => {
     }
 };
 
-//Hämta upp till 20 loggar enligt handling
+//Hämta upp till 15 loggar enligt handling
 module.exports.findActions = async (mysql, action) => {
     try {
         const [rows] = await mysql.query(

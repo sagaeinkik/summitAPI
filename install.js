@@ -2,7 +2,6 @@
 const fastify = require('fastify')();
 require('dotenv').config();
 
-/* const connectionString = `mysql://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/${process.env.DB_DATABASE}`; */
 const connectionString = process.env.DB_URL;
 
 //Databasanslutning
