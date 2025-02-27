@@ -11,7 +11,7 @@ exports.createError = (httpsmessage = '', code = '', message = '', details = '')
 });
 
 //Funktion som nollställer error-objektet
-exports.resetErrors = (error) => this.createError();
+exports.resetErrors = (error) => exports.createError();
 
 //Kontrollerar om något är tomt, null, undefined, på annat sätt ogiltigt
 exports.checkEmpty = (val, fieldName) => {
@@ -23,7 +23,7 @@ exports.checkEmpty = (val, fieldName) => {
     ) {
         return {
             valid: false,
-            error: this.createError('Bad request', 400, `${fieldName} får ej lämnas tomt.`),
+            error: exports.createError('Bad request', 400, `${fieldName} får ej lämnas tomt.`),
         };
     } else {
         return { valid: true };
